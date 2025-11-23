@@ -3,7 +3,7 @@ import { WebSocket, WebSocketServer } from "ws";
 
 dotenv.config();
 
-const PORT = Number(process.env.PORT || 8080);
+const PORT = Number(process.env.PORT || 3001);
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL =
   process.env.OPENAI_MODEL || "gpt-4o-realtime-preview-2024-12-17";
