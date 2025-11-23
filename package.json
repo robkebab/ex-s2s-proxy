@@ -1,0 +1,26 @@
+{
+  "name": "ex-s2s-proxy",
+  "version": "1.0.0",
+  "description": "example websocket proxy using sandboxes for OpenAI realtime",
+  "keywords": [
+    "ai",
+    "sandbox",
+    "vercel",
+    "openai"
+  ],
+  "homepage": "https://github.com/robkebab/ex-s2s-proxy#readme",
+  "bugs": {
+    "url": "https://github.com/robkebab/ex-s2s-proxy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robkebab/ex-s2s-proxy.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
