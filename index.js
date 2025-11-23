@@ -8,7 +8,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL =
   process.env.OPENAI_MODEL || "gpt-4o-realtime-preview-2024-12-17";
 const OPENAI_URL =
-  process.env.OPENAI_URL || "https://api.openai.com/v1/realtime";
+  process.env.OPENAI_URL || "wss://api.openai.com/v1/realtime";
 
 function json(data) {
   console.log(JSON.stringify(data, null, 2));
@@ -43,7 +43,7 @@ function main() {
         code,
         error: json(error || null),
       });
-      
+
       clearInterval(pingInterval);
 
       try {
@@ -56,7 +56,6 @@ function main() {
 
     // Client
     client.on("message", (data, isBinary) => {
-      console.log("client message", { message: json(data) });
       if (upstream.readyState === WebSocket.OPEN) {
         upstream.send(data, { binary: isBinary });
       }
@@ -79,11 +78,10 @@ function main() {
         output_audio_format: "pcm16",
       };
 
-      upstream.send(json({ type: "session.update", session }));
+      upstream.send(JSON.stringify({ type: "session.update", session }));
     });
 
     upstream.on("message", (data, isBinary) => {
-      console.log("upstream message", { message: json(data) });
       if (client.readyState === WebSocket.OPEN) {
         client.send(data, { binary: isBinary });
       }
@@ -98,8 +96,12 @@ function main() {
     });
   });
 
-  server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  wss.on("error", (err) => {
+    console.error("websocket server error", { error: json(err) });
+  });
+
+  wss.on("listening", () => {
+    console.log("websocket server listening on port", PORT);
   });
 }
 
