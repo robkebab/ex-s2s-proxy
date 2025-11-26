@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
 
 dotenv.config();
@@ -19,7 +20,22 @@ function main() {
     throw new Error("OPENAI_API_KEY is not set");
   }
 
-  const wss = new WebSocketServer({ port: PORT, path: "/realtime" });
+  // Create HTTP server
+  const server = http.createServer((req, res) => {
+    // Health check endpoint
+    if (req.url === "/health" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: "ok", ready: true }));
+      return;
+    }
+
+    // For other HTTP requests
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("Not Found");
+  });
+
+  // Attach WebSocket server to HTTP server
+  const wss = new WebSocketServer({ server, path: "/realtime" });
   wss.on("connection", (client) => {
     // init OpenAI Socket
     const upstreamUrl = new URL(OPENAI_URL);
@@ -102,6 +118,11 @@ function main() {
 
   wss.on("listening", () => {
     console.log("websocket server listening on port", PORT);
+  });
+
+  // Start the HTTP server
+  server.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
   });
 }
 
